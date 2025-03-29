@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiqFlix - Premium Streaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e50914;
+            --primary-dark: #b2070f;
+            --dark: #0a0a0a;
+            --dark-light: #1a1a1a;
+            --light: #ffffff;
+            --gray: #8c8c8c;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: var(--dark);
+            padding: 20px;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .logo {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-menu a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--dark-light);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Mobile Menu Button */
+        .menu-btn {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background-color: var(--dark-light);
+            color: var(--light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .menu-btn:hover {
+            background-color: var(--primary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            padding: 70px 20px 20px;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+        
+        .main-content.shifted {
+            margin-left: 250px;
+        }
+        
+        /* Search Section */
+        .search-container {
+            display: none;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-left: 45px;
+            border-radius: 25px;
+            border: none;
+            background-color: var(--dark-light);
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-results {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .search-results.active {
+            display: block;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: var(--gray);
+            margin-top: 20px;
+        }
+        
+        /* Hero Banner */
+        .hero {
+            height: 60vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--dark) 0%, transparent 100%);
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        .hero-description {
+            margin-bottom: 25px;
+            color: var(--gray);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        .hero-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Movie Grid */
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .see-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .see-all:hover {
+            text-decoration: underline;
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .movie-item {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .movie-poster {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 2/3;
+            margin-bottom: 8px;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: var(--transition);
+        }
+        
+        .movie-item:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+        
+        .movie-title {
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .movie-year {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        /* Movie Page */
+        #movie-page {
+            display: none;
+            padding-top: 20px;
+        }
+        
+        .back-btn {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            color: var(--primary);
+        }
+        
+        /* Improved Video Player */
+        .player-container {
+            position: relative;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            background-color: #000;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+        
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .player-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .player-container:hover .player-controls {
+            opacity: 1;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .control-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .progress-container {
+            flex: 1;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin: 0 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 3px;
+            width: 0%;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .progress-container:hover .progress-bar::after {
+            opacity: 1;
+        }
+        
+        .time-display {
+            color: white;
+            font-size: 12px;
+            margin: 0 5px;
+            font-family: monospace;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+        }
+        
+        .volume-slider {
+            width: 80px;
+            margin-left: 5px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .volume-container:hover .volume-slider {
+            opacity: 1;
+        }
+        
+        /* Movie Info */
+        .movie-info {
+            margin-bottom: 30px;
+        }
+        
+        .movie-page-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .meta-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--gray);
+            flex-wrap: wrap;
+        }
+        
+        .rating {
+            color: gold;
+            font-weight: 600;
+        }
+        
+        .genre {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .genre span {
+            background-color: var(--dark-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        
+        .synopsis {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .watch-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .watch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Cast */
+        .cast-section, .recommendations {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .cast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+        
+        .cast-card {
+            text-align: center;
+        }
+        
+        .cast-card img {
+            width: 100%;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+        
+        .cast-card h4 {
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+        
+        .cast-card p {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-light);
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--light);
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 250px;
+                padding: 20px 30px;
+            }
+            
+            .menu-btn {
+                display: none;
+            }
+            
+            .hero {
+                height: 70vh;
+                padding: 0 40px;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .main-content {
+                padding: 30px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo" onclick="showHomePage()">
+            <i class="fas fa-film"></i> BIQFLIX
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active" onclick="showHomePage(event)"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="showMoviesPage(event)"><i class="fas fa-film"></i> Movies</a></li>
+            <li><a href="#" onclick="showTVShowsPage(event)"><i class="fas fa-tv"></i> TV Shows</a></li>
+            <li><a href="#" onclick="showMyListPage(event)"><i class="fas fa-bookmark"></i> My List</a></li>
+            <li><a href="#" onclick="showSearchPage(event)"><i class="fas fa-search"></i> Search</a></li>
+            <li><a href="#" onclick="showSettingsPage(event)"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="menu-btn" id="menuBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Loading Animation -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Tunggu Lagi Loading Anj...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Home Page -->
+        <div id="home-page">
+            <!-- Hero Banner -->
+            <section class="hero" style="background: url('https://image.tmdb.org/t/p/w300/wyRVXRygEOPpjTIcDz3z7ZXLZ45.jpg') no-repeat center center/cover;">
+                <div class="hero-content">
+                    <h1 class="hero-title">KKN: Di Desa Penari</h1>
+                    <p class="hero-description">A group of students encounter strange and terrifying events during their community service in a remote village. This film is an extended version of 2022s KKN di Desa Penari.</p>
+                    <button class="hero-btn" onclick="showMoviePage('avengers-endgame')">
+                        <i class="fas fa-play"></i> Watch Now
+                    </button>
+                </div>
+            </section>
+
+            <!-- Movie Sections -->
+            <section class="section">
+                <h2 class="section-title">
+                    Popular Movies
+                    <span class="see-all" onclick="showMoviesPage()">See All</span>
+                </h2>
+                <div class="movie-grid">
+                    <!-- Movie Item 1 -->
+                    <div class="movie-item" onclick="showMoviePage('avengers-endgame')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/wyRVXRygEOPpjTIcDz3z7ZXLZ45.jpg" alt="Avengers: Endgame">
+                        </div>
+                        <h3 class="movie-title">KKN: Di Desa Penari</h3>
+                        <p class="movie-year">2022</p>
+                    </div>
+                    
+                    <!-- Movie Item 2 -->
+                    <div class="movie-item" onclick="showMoviePage('joker')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/A4kY5RKiPJ0sRknU4NojItr93Jr.jpg" alt="Badarawuhi">
+                        </div>
+                        <h3 class="movie-title">Badarawuhi</h3>
+                        <p class="movie-year">2024</p>
+                    </div>
+                    
+                    <!-- Movie Item 3 - Dilan 1883 -->
+                    <div class="movie-item" onclick="showMoviePage('dilan-1883')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg" alt="Dilan 1983">
+                        </div>
+                        <h3 class="movie-title">Dilan 1983: Wo Ai Ni</h3>
+                        <p class="movie-year">2024</p>
+                    </div>
+                    
+                    <!-- Movie Item 4 - Agak Laen -->
+                    <div class="movie-item" onclick="showMoviePage('agak-laen')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/zoKAggBy8xUEFEHfAXTBvMlLeKy.jpg" alt="Agak Laen">
+                        </div>
+                        <h3 class="movie-title">Agak Laen</h3>
+                        <p class="movie-year">2024</p>
+                    </div>
+                    
+                    <!-- Movie Item 5 - Milea -->
+                    <div class="movie-item" onclick="showMoviePage('milea')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg" alt="Milea">
+                        </div>
+                        <h3 class="movie-title">Milea</h3>
+                        <p class="movie-year">2020</p>
+                    </div>
+                    
+                    <!-- Movie Item 6 - Dilan 1990 -->
+                    <div class="movie-item" onclick="showMoviePage('dilan-1990')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="Dilan 1990">
+                        </div>
+                        <h3 class="movie-title">Dilan 1990</h3>
+                        <p class="movie-year">2018</p>
+                    </div>
+                    
+                    <!-- Movie Item 7 - Bila Esok Ibu Tiada -->
+                    <div class="movie-item" onclick="showMoviePage('bila-esok-ibu-tiada')">
+                        <div class="movie-poster">
+                            <img src="https://via.placeholder.com/300x450?text=Bila+Esok+Ibu+Tiada" alt="Bila Esok Ibu Tiada">
+                        </div>
+                        <h3 class="movie-title">Bila Esok Ibu Tiada</h3>
+                        <p class="movie-year">2023</p>
+                    </div>
+                    
+                    <!-- Movie Item 8 - Cinta Dalam Ikhlas -->
+                    <div class="movie-item" onclick="showMoviePage('cinta-dalam-ikhlas')">
+                        <div class="movie-poster">
+                            <img src="http://159.89.174.58/wp-content/uploads/2025/03/4K9GcSkOlqOCvAbbhgNeid6aT9E-152x228.jpg" alt="Cinta Dalam Ikhlas">
+                        </div>
+                        <h3 class="movie-title">Cinta Dalam Ikhlas</h3>
+                        <p class="movie-year">2023</p>
+                    </div>
+                    
+                    <!-- Movie Item 9 - Kang Mak -->
+                    <div class="movie-item" onclick="showMoviePage('kang-mak')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/h2k58PFM2dQsHXNxb2D471r3BJp.jpg" alt="Kang Mak">
+                        </div>
+                        <h3 class="movie-title">Kang Mak From Pee Mak</h3>
+                        <p class="movie-year">2023</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- More Sections... -->
+        </div>
+
+        <!-- Search Page -->
+        <div class="search-container" id="searchPage">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for movies..." autocomplete="off">
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="movie-grid" id="searchResultsGrid"></div>
+                <div class="no-results" id="noResults">No movies found</div>
+            </div>
+        </div>
+
+        <!-- Movie Page -->
+        <div id="movie-page">
+            <div class="back-btn" onclick="showHomePage()">
+                <i class="fas fa-arrow-left"></i> Back to Browse
+            </div>
+            
+            <div class="player-container">
+                <div class="video-wrapper">
+                    <video id="moviePlayer" poster="">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="player-controls">
+                    <button class="control-btn" onclick="togglePlay()">
+                        <i class="fas fa-play" id="playBtnIcon"></i>
+                    </button>
+                    <div class="progress-container" onclick="seek(event)">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <span class="time-display" id="currentTime">0:00</span>
+                    <span class="time-display">/</span>
+                    <span class="time-display" id="duration">0:00</span>
+                    <div class="volume-container">
+                        <button class="control-btn" onclick="toggleMute()">
+                            <i class="fas fa-volume-up" id="volumeBtnIcon"></i>
+                        </button>
+                        <input type="range" min="0" max="1" step="0.01" value="1" class="volume-slider" id="volumeSlider" oninput="setVolume(this.value)">
+                    </div>
+                    <button class="control-btn" onclick="toggleFullscreen()">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="movie-info">
+                <h1 class="movie-page-title" id="movieTitle">Movie Title</h1>
+                <div class="meta-info">
+                    <span class="rating" id="movieRating">★ 0.0</span>
+                    <span id="movieYear">0000</span>
+                    <span id="movieDuration">0h 0m</span>
+                    <span>HD</span>
+                </div>
+                <div class="genre" id="movieGenre">
+                    <!-- Genre will be filled by JavaScript -->
+                </div>
+                <p class="synopsis" id="movieSynopsis">Movie description will appear here.</p>
+                <button class="watch-btn" onclick="playMovie()">
+                    <i class="fas fa-play"></i> Play Movie
+                </button>
+            </div>
+            
+            <!-- Cast Section -->
+            <div class="cast-section">
+                <h2 class="section-title">Cast</h2>
+                <div class="cast-grid" id="movieCast">
+                    <!-- Cast will be filled by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h2 class="section-title">More Like This</h2>
+                <div class="movie-grid" id="movieRecommendations">
+                    <!-- Recommendations will be filled by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Help Center</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Contact</a>
+        </div>
+        <p class="copyright">© 2023 BiqFlix. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Movie database (simulated)
+        const movieDatabase = {
+            'avengers-endgame': {
+                title: 'KKN: Di Desa Penari',
+                year: '2022',
+                duration: '2h 55m',
+                rating: '8.7',
+                genres: ['Horror', 'Mystery', 'Thriller'],
+                synopsis: 'A group of students encounter strange and terrifying events during their community service in a remote village. This film is an extended version of 2022s KKN di Desa Penari.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/wyRVXRygEOPpjTIcDz3z7ZXLZ45.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg',
+                streamUrl: 'https://g6m5vwc8rl.premilkyway.com/hls2/01/03294/93vmdp8difaq_x/index-v1-a1.m3u8?t=x3OyDI5eSw90K1k5w3QsST82KzOvpBaF1wEGeoExlQA&s=1743256725&e=129600&f=46591991&srv=R7khaR4Jtgqr&i=0.4&sp=500&p1=R7khaR4Jtgqr&p2=R7khaR4Jtgqr&asn=7713',
+                cast: [
+                    {
+                        name: 'Robert Downey Jr.',
+                        character: 'Tony Stark',
+                        photo: 'https://image.tmdb.org/t/p/w200/ueMwVxgPE8xTTt7XBpTsA0WxSRM.jpg'
+                    },
+                    {
+                        name: 'Chris Evans',
+                        character: 'Steve Rogers',
+                        photo: 'https://image.tmdb.org/t/p/w200/3bOGNsHlrswhyW79uvIHH1V43JI.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'avengers-infinity-war',
+                        title: 'Avengers: Infinity War',
+                        poster: 'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg'
+                    },
+                    {
+                        id: 'black-panther',
+                        title: 'Black Panther',
+                        poster: 'https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg'
+                    }
+                ]
+            },
+            'joker': {
+                title: 'Badarawuhi Di Desa Penari',
+                year: '2024',
+                duration: '2h 2m',
+                rating: '5.7',
+                genres: ['Horror', 'Mistery', 'Thriller'],
+                synopsis: 'Mila must return a mystical bracelet to the "Dancing Village," unaware that Badarawuhi - a mysterious, mythical being who rules the village - awaits her.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/A4kY5RKiPJ0sRknU4NojItr93Jr.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/n6bUvigpRFqSwmPp1m2YADdbRBc.jpg',
+                streamUrl: 'https://cukooifnwbux.premilkyway.com/hls2/01/04553/l0laisi6i5km_n/index-v1-a1.m3u8?t=J57fk4YweqLdh5AzlYqFx24uxNWTCAv5bsiz6FxzmWc&s=1743262862&e=129600&f=22768180&srv=dwjdqozeoybz&i=0.4&sp=500&p1=dwjdqozeoybz&p2=dwjdqozeoybz&asn=7713',
+                cast: [
+                    {
+                        name: 'Joaquin Phoenix',
+                        character: 'Arthur Fleck',
+                        photo: 'https://image.tmdb.org/t/p/w200/hQRb6G7hgT9Qkt9W0Q6qvvnQH3x.jpg'
+                    },
+                    {
+                        name: 'Robert De Niro',
+                        character: 'Murray Franklin',
+                        photo: 'https://image.tmdb.org/t/p/w200/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'the-dark-knight',
+                        title: 'The Dark Knight',
+                        poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg'
+                    },
+                    {
+                        id: 'taxi-driver',
+                        title: 'Taxi Driver',
+                        poster: 'https://image.tmdb.org/t/p/w500/ekstpH614fwDX8DUln1a2Opz0N8.jpg'
+                    }
+                ]
+            },
+            'dilan-1883': {
+                title: 'Dilan 1983: Wo Ai Ni',
+                year: '2024',
+                duration: '1h 55m',
+                rating: '7.8',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'The continuation of Dilan and Milea\'s love story in 1991. Dilan is now a military academy cadet while Milea continues her studies in Bandung. Their love is tested by distance and circumstances.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/8k7WVp6mN7rHvXbLtJ37XqQ8MxX.jpg',
+                streamUrl: 'https://vwyn3lxe5fv5.premilkyway.com/hls2/01/07574/yxhlufr4lcas_n/index-v1-a1.m3u8?t=JU2vk171ZwTojD79INXfif5UjK6oqo1CxPbHWmOKm7A&s=1743248120&e=129600&f=44994556&srv=meuzahgd24x5v&i=0.4&sp=500&p1=meuzahgd24x5v&p2=meuzahgd24x5v&asn=7713',
+                cast: [
+                    {
+                        name: 'Iqbaal Ramadhan',
+                        character: 'Dilan',
+                        photo: 'https://image.tmdb.org/t/p/w200/6UxHr7YQqViV2g4qZJdF9vZvL7D.jpg'
+                    },
+                    {
+                        name: 'Vanessa Angel',
+                        character: 'Milea',
+                        photo: 'https://image.tmdb.org/t/p/w200/9Ph4W8W8q4X5cKdM6vJ9q9cZ3vD.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'dilan-1990',
+                        title: 'Dilan 1990',
+                        poster: 'https://image.tmdb.org/t/p/w500/1Ux0Sy5MI6X5X5Q5q5q5Q5q5Q5q.jpg'
+                    },
+                    {
+                        id: 'milea',
+                        title: 'Milea',
+                        poster: 'https://image.tmdb.org/t/p/w500/5mzB4Lg6vFq5B2jeiV1FkJj0FjB.jpg'
+                    }
+                ]
+            },
+            'agak-laen': {
+                title: 'Agak Laen',
+                year: '2024',
+                duration: '1h 45m',
+                rating: '7.2',
+                genres: ['Comedy', 'Horror'],
+                synopsis: 'A group of friends who run a horror-themed tourist attraction accidentally capture real supernatural occurrences on camera, leading to unexpected consequences.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/zoKAggBy8xUEFEHfAXTBvMlLeKy.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/8k7WVp6mN7rHvXbLtJ37XqQ8MxX.jpg',
+                streamUrl: 'https://lsj7fwyxsn2mklu.premilkyway.com/hls2/01/04035/szvo795nmmrh_n/index-v1-a1.m3u8?t=YRQsiKdxzZnONW0cE_tP8dTrV2MjsRlRIE_9znJ0CNw&s=1743247973&e=129600&f=44281204&srv=KsLkgBWej56z&i=0.4&sp=500&p1=KsLkgBWej56z&p2=KsLkgBWej56z&asn=7713',
+                cast: [
+                    {
+                        name: 'Boris Bokir',
+                        character: 'Boris',
+                        photo: 'https://image.tmdb.org/t/p/w200/6UxHr7YQqViV2g4qZJdF9vZvL7D.jpg'
+                    },
+                    {
+                        name: 'Oki Rengga',
+                        character: 'Oki',
+                        photo: 'https://image.tmdb.org/t/p/w200/9Ph4W8W8q4X5cKdM6vJ9q9cZ3vD.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'kkn-di-desa-penari',
+                        title: 'KKN di Desa Penari',
+                        poster: 'https://image.tmdb.org/t/p/w500/3Q5Q5q5Q5q5Q5q5Q5q5Q5q5Q5q.jpg'
+                    },
+                    {
+                        id: 'pengabdi-setan',
+                        title: 'Pengabdi Setan',
+                        poster: 'https://image.tmdb.org/t/p/w500/4Q5Q5q5Q5q5Q5q5Q5q5Q5q5Q5q.jpg'
+                    }
+                ]
+            },
+            'milea': {
+                title: 'Milea',
+                year: '2020',
+                duration: '1h 50m',
+                rating: '7.5',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'The continuation of the love story between Dilan and Milea. This time, the story is told from Milea\'s perspective, revealing her feelings and thoughts during their relationship.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/8k7WVp6mN7rHvXbLtJ37XqQ8MxX.jpg',
+                streamUrl: 'https://5nrdhdrayadkaqp2.premilkyway.com/hls2/01/02867/8374s25345g8_n/index-v1-a1.m3u8?t=QIQIOAOURzkuUabazsvBlumO6XHdtNEfOyDKh7KO_mY&s=1743253615&e=129600&f=14337946&srv=galk8e9m4l6if&i=0.4&sp=500&p1=galk8e9m4l6if&p2=galk8e9m4l6if&asn=7713',
+                cast: [
+                    {
+                        name: 'Vanessa Angel',
+                        character: 'Milea',
+                        photo: 'https://image.tmdb.org/t/p/w200/9Ph4W8W8q4X5cKdM6vJ9q9cZ3vD.jpg'
+                    },
+                    {
+                        name: 'Iqbaal Ramadhan',
+                        character: 'Dilan',
+                        photo: 'https://image.tmdb.org/t/p/w200/6UxHr7YQqViV2g4qZJdF9vZvL7D.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'dilan-1990',
+                        title: 'Dilan 1990',
+                        poster: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg'
+                    },
+                    {
+                        id: 'dilan-1883',
+                        title: 'Dilan 1983: Wo Ai Ni',
+                        poster: 'https://image.tmdb.org/t/p/w500/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg'
+                    }
+                ]
+            },
+            'dilan-1990': {
+                title: 'Dilan 1990',
+                year: '2018',
+                duration: '1h 50m',
+                rating: '8.0',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'The story of Dilan and Milea\'s love in 1990 when they were in high school. Dilan, a unique and charming boy, tries various ways to get closer to Milea, the new girl at school.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                backdropUrl: 'https://image.tmdb.org/t/p/original/8k7WVp6mN7rHvXbLtJ37XqQ8MxX.jpg',
+                streamUrl: 'https://in1rhjc5cqhz.premilkyway.com/hls2/01/08252/kc81uvxqoaf2_n/index-v1-a1.m3u8?t=8BE-enVaX_cC6fORX2iENNOgZpO4vtXFFX9_U2tMPYk&s=1743253492&e=129600&f=43907939&srv=0wnh534rdgf989&i=0.4&sp=500&p1=0wnh534rdgf989&p2=0wnh534rdgf989&asn=7713',
+                cast: [
+                    {
+                        name: 'Iqbaal Ramadhan',
+                        character: 'Dilan',
+                        photo: 'https://image.tmdb.org/t/p/w200/6UxHr7YQqViV2g4qZJdF9vZvL7D.jpg'
+                    },
+                    {
+                        name: 'Vanessa Angel',
+                        character: 'Milea',
+                        photo: 'https://image.tmdb.org/t/p/w200/9Ph4W8W8q4X5cKdM6vJ9q9cZ3vD.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'dilan-1883',
+                        title: 'Dilan 1983: Wo Ai Ni',
+                        poster: 'https://image.tmdb.org/t/p/w500/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg'
+                    },
+                    {
+                        id: 'milea',
+                        title: 'Milea: Suara dari Dilan',
+                        poster: 'https://image.tmdb.org/t/p/w500/5mzB4Lg6vFq5B2jeiV1FkJj0FjB.jpg'
+                    }
+                ]
+            },
+            'bila-esok-ibu-tiada': {
+                title: 'Bila Esok Ibu Tiada',
+                year: '2023',
+                duration: '1h 45m',
+                rating: '7.8',
+                genres: ['Drama', 'Family'],
+                synopsis: 'A heartwarming story about family bonds and the unconditional love of a mother facing a terminal illness.',
+                posterUrl: 'https://via.placeholder.com/300x450?text=Bila+Esok+Ibu+Tiada',
+                backdropUrl: 'https://via.placeholder.com/1920x1080?text=Bila+Esok+Ibu+Tiada',
+                streamUrl: 'https://be6721.rcr72.waw04.cdn255.com/hls2/01/08534/fjxpa33ktz2f_h/index-v1-a1.m3u8?t=EwzAVtx7xPFifJw-0n-SQ2jN7Rj9eyLF0DFLAx83Qmw&s=1743267761&e=10800&f=42674276&srv=16&asn=7713&sp=4000&p=',
+                cast: [
+                    {
+                        name: 'Acha Septriasa',
+                        character: 'Ibu',
+                        photo: 'https://image.tmdb.org/t/p/w200/1E5baAaEse26fej7uHcjOgEE2t2.jpg'
+                    },
+                    {
+                        name: 'Reza Rahadian',
+                        character: 'Ayah',
+                        photo: 'https://image.tmdb.org/t/p/w200/7YwjaHLmuy1iPpq4P93Q85POuQm.jpg'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'dilan-1990',
+                        title: 'Dilan 1990',
+                        poster: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg'
+                    },
+                    {
+                        id: 'milea',
+                        title: 'Milea: Suara dari Dilan',
+                        poster: 'https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg'
+                    }
+                ]
+            },
+            'cinta-dalam-ikhlas': {
+                title: 'Cinta Dalam Ikhlas',
+                year: '2023',
+                duration: '1h 50m',
+                rating: '7.5',
+                genres: ['Romance', 'Drama'],
+                synopsis: 'A touching love story about sacrifice and true devotion in relationships.',
+                posterUrl: 'http://159.89.174.58/wp-content/uploads/2025/03/4K9GcSkOlqOCvAbbhgNeid6aT9E-152x228.jpg',
+                backdropUrl: 'https://via.placeholder.com/1920x1080?text=Cinta+Dalam+Ikhlas',
+                streamUrl: 'https://be2719.rcr22.ams01.cdn255.com/hls2/01/08598/c27py8emw5k6_h/index-v1-a1.m3u8?t=VYfaIL2A40_hBO5JafE9l9tKZXuQNfy6unW7fBLFvic&s=1743270143&e=10800&f=42994400&srv=29&asn=7713&sp=4000&p=',
+                cast: [
+                    {
+                        name: 'Abun Sungkar',
+                        character: 'Athar',
+                        photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdwSP8mpspXilGUFcu6SS3qn8So7Zz9KUsYN3tZ_MIVYfcd7iGCPMLU0s&s=10'
+                    },
+                    {
+                        name: 'Adhisty Zara',
+                        character: 'Ara',
+                        photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3seiB_bIGwNeYAkoNJySjVE_oMnOLJemlmz8y9xkOi-LtgmHjCJ5yiIQ&s=10#'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'dilan-1990',
+                        title: 'Dilan 1990',
+                        poster: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg'
+                    },
+                    {
+                        id: 'milea',
+                        title: 'Milea: Suara dari Dilan',
+                        poster: 'https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg'
+                    }
+                ]
+            },
+            'kang-mak': {
+                title: 'Kang Mak (From Pee Mak)',
+                year: '2023',
+                duration: '2h 44m',
+                rating: '6.9',
+                genres: ['Comedy', 'Drama' , 'Romance'],
+                synopsis: 'A hilarious yet touching story about a quirky neighborhood figure who brings joy to everyone around him.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/h2k58PFM2dQsHXNxb2D471r3BJp.jpg',
+                backdropUrl: 'https://via.placeholder.com/1920x1080?text=Kang+Mak',
+                streamUrl: 'https://jturq6cd3wcv.premilkyway.com/hls2/01/07661/8k66gqreyuv8_n/index-v1-a1.m3u8?t=syIdExihZQGjXXYl5Nn2glHxn5M2ll9Y2gv06wWMIcU&s=1743268928&e=129600&f=38312632&srv=xcjcmoh7mtij&i=0.4&sp=500&p1=xcjcmoh7mtij&p2=xcjcmoh7mtij&asn=7713',
+                cast: [
+                    {
+                        name: 'Vino G. Bastian',
+                        character: 'Kang Mak',
+                        photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR20EkjsasSwcbTWQTkmTSAsKLR2FP0_FKnY1NoCscGjDZqXUyD720BHQ&s=10'
+                    },
+                    {
+                        name: 'Marsha Timothy',
+                        character: 'Sari',
+                        photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO_26WLSEuPy0KNrCa5t9hQJBwEdBPg7YlGhRYSHXz7ahA1qovaFKE6qo&s=10'
+                    }
+                ],
+                recommendations: [
+                    {
+                        id: 'agak-laen',
+                        title: 'Agak Laen',
+                        poster: 'https://image.tmdb.org/t/p/w300/zoKAggBy8xUEFEHfAXTBvMlLeKy.jpg'
+                    },
+                    {
+                        id: 'kkn-di-desa-penari',
+                        title: 'KKN di Desa Penari',
+                        poster: 'https://image.tmdb.org/t/p/w300/wyRVXRygEOPpjTIcDz3z7ZXLZ45.jpg'
+                    }
+                ]
+            }
+        };
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.getElementById('menuBtn');
+        const mainContent = document.getElementById('mainContent');
+        const homePage = document.getElementById('home-page');
+        const searchPage = document.getElementById('searchPage');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsGrid = document.getElementById('searchResultsGrid');
+        const noResults = document.getElementById('noResults');
+        const moviePage = document.getElementById('movie-page');
+        const loadingScreen = document.getElementById('loading');
+        const moviePlayer = document.getElementById('moviePlayer');
+        const playBtnIcon = document.getElementById('playBtnIcon');
+        const volumeBtnIcon = document.getElementById('volumeBtnIcon');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
+        
+        // Player state
+        let isPlaying = false;
+        let isMuted = false;
+        
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 768 && !sidebar.contains(e.target) && e.target !== menuBtn) {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('shifted');
+            }
+        });
+
+        // Show home page
+        function showHomePage(e) {
+            if(e) e.preventDefault();
+            homePage.style.display = 'block';
+            searchPage.style.display = 'none';
+            moviePage.style.display = 'none';
+            document.title = 'BiqFlix - Premium Streaming';
+            window.scrollTo(0, 0);
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('shifted');
+            }
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.sidebar-menu a:nth-child(1)').classList.add('active');
+        }
+
+        // Show movies page
+        function showMoviesPage(e) {
+            if(e) e.preventDefault();
+            showHomePage();
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('shifted');
+            }
+        }
+
+        // Show TV shows page
+        function showTVShowsPage(e) {
+            if(e) e.preventDefault();
+            alert('TV Shows page would show here in a full implementation');
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            e.target.classList.add('active');
+        }
+
+        // Show my list page
+        function showMyListPage(e) {
+            if(e) e.preventDefault();
+            alert('My List page would show here in a full implementation');
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            e.target.classList.add('active');
+        }
+
+        // Show search page
+        function showSearchPage(e) {
+            if(e) e.preventDefault();
+            homePage.style.display = 'none';
+            searchPage.style.display = 'block';
+            moviePage.style.display = 'none';
+            document.title = 'Search | BiqFlix';
+            window.scrollTo(0, 0);
+            
+            // Focus on search input
+            setTimeout(() => {
+                searchInput.focus();
+            }, 100);
+            
+            // Update active menu item
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('shifted');
+            }
+        }
+
+        // Show settings page
+        function showSettingsPage(e) {
+            if(e) e.preventDefault();
+            alert('Settings page would show here in a full implementation');
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.classList.remove('active');
+            });
+            e.target.classList.add('active');
+        }
+
+        // Show movie page
+        function showMoviePage(movieId) {
+            loadingScreen.style.display = 'flex';
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                const movie = movieDatabase[movieId];
+                
+                if (movie) {
+                    // Update movie info
+                    document.getElementById('movieTitle').textContent = movie.title;
+                    document.getElementById('movieRating').textContent = `★ ${movie.rating}`;
+                    document.getElementById('movieYear').textContent = movie.year;
+                    document.getElementById('movieDuration').textContent = movie.duration;
+                    document.getElementById('movieSynopsis').textContent = movie.synopsis;
+                    
+                    // Update video source and poster
+                    moviePlayer.poster = movie.posterUrl;
+                    moviePlayer.innerHTML = `<source src="${movie.streamUrl}" type="application/x-mpegURL">`;
+                    moviePlayer.load();
+                    
+                    // Update genres
+                    const genreContainer = document.getElementById('movieGenre');
+                    genreContainer.innerHTML = '';
+                    movie.genres.forEach(genre => {
+                        const span = document.createElement('span');
+                        span.textContent = genre;
+                        genreContainer.appendChild(span);
+                    });
+                    
+                    // Update cast
+                    const castContainer = document.getElementById('movieCast');
+                    castContainer.innerHTML = '';
+                    movie.cast.forEach(person => {
+                        const castCard = document.createElement('div');
+                        castCard.className = 'cast-card';
+                        castCard.innerHTML = `
+                            <img src="${person.photo}" alt="${person.name}">
+                            <h4>${person.name}</h4>
+                            <p>${person.character}</p>
+                        `;
+                        castContainer.appendChild(castCard);
+                    });
+                    
+                    // Update recommendations
+                    const recContainer = document.getElementById('movieRecommendations');
+                    recContainer.innerHTML = '';
+                    movie.recommendations.forEach(rec => {
+                        const movieItem = document.createElement('div');
+                        movieItem.className = 'movie-item';
+                        movieItem.innerHTML = `
+                            <div class="movie-poster">
+                                <img src="${rec.poster}" alt="${rec.title}">
+                            </div>
+                            <h3 class="movie-title">${rec.title}</h3>
+                        `;
+                        movieItem.onclick = () => showMoviePage(rec.id);
+                        recContainer.appendChild(movieItem);
+                    });
+                    
+                    // Update page title
+                    document.title = `${movie.title} | BiqFlix`;
+                    
+                    // Switch pages
+                    homePage.style.display = 'none';
+                    searchPage.style.display = 'none';
+                    moviePage.style.display = 'block';
+                    loadingScreen.style.display = 'none';
+                    window.scrollTo(0, 0);
+                } else {
+                    // Movie not found
+                    loadingScreen.style.display = 'none';
+                    alert('Movie not found!');
+                }
+            }, 800); // Simulated loading delay
+        }
+
+        // Search functionality
+        function performSearch(query) {
+            const searchTerm = query.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                searchResults.classList.remove('active');
+                noResults.style.display = 'none';
+                return;
+            }
+            
+            searchResults.classList.add('active');
+            searchResultsGrid.innerHTML = '';
+            
+            let foundResults = false;
+            
+            // Search through movie database
+            for (const movieId in movieDatabase) {
+                const movie = movieDatabase[movieId];
+                const title = movie.title.toLowerCase();
+                
+                if (title.includes(searchTerm)) {
+                    foundResults = true;
+                    
+                    const movieItem = document.createElement('div');
+                    movieItem.className = 'movie-item';
+                    movieItem.innerHTML = `
+                        <div class="movie-poster">
+                            <img src="${movie.posterUrl}" alt="${movie.title}">
+                        </div>
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <p class="movie-year">${movie.year}</p>
+                    `;
+                    movieItem.onclick = () => showMoviePage(movieId);
+                    searchResultsGrid.appendChild(movieItem);
+                }
+            }
+            
+            noResults.style.display = foundResults ? 'none' : 'block';
+        }
+        
+        // Handle search input
+        searchInput.addEventListener('input', function() {
+            performSearch(this.value);
+        });
+        
+        // Player control functions
+        function togglePlay() {
+            if (moviePlayer.paused) {
+                moviePlayer.play();
+                playBtnIcon.classList.remove('fa-play');
+                playBtnIcon.classList.add('fa-pause');
+                isPlaying = true;
+            } else {
+                moviePlayer.pause();
+                playBtnIcon.classList.remove('fa-pause');
+                playBtnIcon.classList.add('fa-play');
+                isPlaying = false;
+            }
+        }
+        
+        function playMovie() {
+            moviePlayer.muted = false;
+            isMuted = false;
+            volumeBtnIcon.classList.remove('fa-volume-mute');
+            volumeBtnIcon.classList.add('fa-volume-up');
+            volumeSlider.value = 1;
+            
+            const playPromise = moviePlayer.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    playBtnIcon.classList.remove('fa-play');
+                    playBtnIcon.classList.add('fa-pause');
+                    isPlaying = true;
+                }).catch(error => {
+                    moviePlayer.controls = true;
+                });
+            }
+        }
+        
+        function toggleMute() {
+            if (moviePlayer.muted) {
+                moviePlayer.muted = false;
+                volumeBtnIcon.classList.remove('fa-volume-mute');
+                volumeBtnIcon.classList.add('fa-volume-up');
+                isMuted = false;
+                volumeSlider.value = moviePlayer.volume;
+            } else {
+                moviePlayer.muted = true;
+                volumeBtnIcon.classList.remove('fa-volume-up');
+                volumeBtnIcon.classList.add('fa-volume-mute');
+                isMuted = true;
+                volumeSlider.value = 0;
+            }
+        }
+        
+        function setVolume(value) {
+            moviePlayer.volume = value;
+            moviePlayer.muted = (value == 0);
+            
+            if (value == 0) {
+                volumeBtnIcon.classList.remove('fa-volume-up');
+                volumeBtnIcon.classList.add('fa-volume-mute');
+                isMuted = true;
+            } else {
+                volumeBtnIcon.classList.remove('fa-volume-mute');
+                volumeBtnIcon.classList.add('fa-volume-up');
+                isMuted = false;
+            }
+        }
+        
+        function seek(e) {
+            const percent = e.offsetX / e.target.offsetWidth;
+            moviePlayer.currentTime = percent * moviePlayer.duration;
+            progressBar.style.width = `${percent * 100}%`;
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                moviePlayer.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Update progress bar and time display
+        moviePlayer.addEventListener('timeupdate', function() {
+            const currentTime = moviePlayer.currentTime;
+            const duration = moviePlayer.duration;
+            
+            // Update progress bar
+            if (duration > 0) {
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+            
+            // Update time display
+            currentTimeDisplay.textContent = formatTime(currentTime);
+            durationDisplay.textContent = formatTime(duration);
+        });
+        
+        // Format time as MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Handle play/pause when video is clicked
+        moviePlayer.addEventListener('click', togglePlay);
+        
+        // Handle video end
+        moviePlayer.addEventListener('ended', function() {
+            playBtnIcon.classList.remove('fa-pause');
+            playBtnIcon.classList.add('fa-play');
+            isPlaying = false;
+        });
+        
+        // Initialize - show home page by default
+        showHomePage();
+        
+        // Adjust layout on resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.add('open');
+                mainContent.classList.add('shifted');
+            }
+        });
+    </script>
+</body>
+</html>
