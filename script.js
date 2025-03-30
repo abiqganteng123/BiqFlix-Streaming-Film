@@ -38,7 +38,7 @@ const movieDatabase = {
         genres: ['Comedy', 'Horror'],
         synopsis: 'A group of friends who run a horror-themed tourist attraction accidentally capture real supernatural occurrences on camera, leading to unexpected consequences.',
         posterUrl: 'https://image.tmdb.org/t/p/w300/zoKAggBy8xUEFEHfAXTBvMlLeKy.jpg',
-        streamUrl: 'https://p5qxmilmdj.premilkyway.com/hls2/01/04035/szvo795nmmrh_n/index-v1-a1.m3u8?t=M3luIxqXQIQ2uNrSDpw5dZQoGdTpSKmQ2hLiAPxuFks&s=1743366542&e=129600&f=44281204&srv=KsLkgBWej56z&i=0.4&sp=500&p1=KsLkgBWej56z&p2=KsLkgBWej56z&asn=7713'
+        streamUrl: 'https://zqvnzsxicfeh.premilkyway.com/hls2/01/05223/19woita4e2x8_n/index-v1-a1.m3u8?t=KIJSasrYBFp9XD32WLosefOOFroNnGwp-2Z3vG0KIQg&s=1743378838&e=129600&f=43583742&srv=meuzahgd24x5v&i=0.4&sp=500&p1=meuzahgd24x5v&p2=meuzahgd24x5v&asn=24203'
         
     },
     'kangmak': {
