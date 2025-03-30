@@ -201,6 +201,76 @@ const durationDisplay = document.getElementById('duration');
 // Player state
 let isPlaying = false;
 let isMuted = false;
+let retryCount = 0;
+const MAX_RETRIES = 3;
+let networkErrorTimeout;
+let bufferingTimeout;
+let currentMovieId = null;
+
+// Improved video player with buffering handling
+function setupVideoPlayer() {
+    // Clear any existing timeouts
+    clearTimeout(networkErrorTimeout);
+    clearTimeout(bufferingTimeout);
+
+    // Reset player state
+    moviePlayer.preload = 'auto';
+    moviePlayer.playsInline = true;
+    moviePlayer.controls = false;
+    moviePlayer.autoplay = false;
+
+    // Event listeners for better error handling
+    moviePlayer.addEventListener('error', handleVideoError);
+    moviePlayer.addEventListener('waiting', handleBuffering);
+    moviePlayer.addEventListener('playing', handlePlaying);
+    moviePlayer.addEventListener('canplay', handleCanPlay);
+    moviePlayer.addEventListener('stalled', handleStalled);
+}
+
+function handleVideoError() {
+    console.error('Video error:', moviePlayer.error);
+    if (retryCount < MAX_RETRIES && currentMovieId) {
+        retryCount++;
+        console.log(`Retrying playback (attempt ${retryCount})...`);
+        showMoviePage(currentMovieId);
+    } else {
+        loadingScreen.style.display = 'none';
+        alert('Failed to load video. Please check your connection and try again.');
+    }
+}
+
+function handleBuffering() {
+    console.log('Buffering...');
+    loadingScreen.style.display = 'flex';
+    
+    // Set timeout to detect prolonged buffering
+    bufferingTimeout = setTimeout(() => {
+        if (!isPlaying && currentMovieId) {
+            console.log('Buffering taking too long, attempting recovery...');
+            moviePlayer.load(); // Trigger reload
+        }
+    }, 5000); // 5 seconds
+}
+
+function handlePlaying() {
+    console.log('Playback started');
+    loadingScreen.style.display = 'none';
+    clearTimeout(bufferingTimeout);
+    isPlaying = true;
+}
+
+function handleCanPlay() {
+    console.log('Enough data available to play');
+    loadingScreen.style.display = 'none';
+    clearTimeout(bufferingTimeout);
+}
+
+function handleStalled() {
+    console.log('Playback stalled, attempting recovery...');
+    if (!isPlaying) {
+        moviePlayer.load();
+    }
+}
 
 // Show toast notification
 function showToast() {
@@ -267,10 +337,14 @@ function showSearchPage(e) {
     e.target.classList.add('active');
 }
 
-// Show movie page
+// Show movie page with improved streaming handling
 function showMoviePage(movieId) {
+    currentMovieId = movieId;
+    retryCount = 0;
     loadingScreen.style.display = 'flex';
     
+    setupVideoPlayer();
+
     // Simulate loading delay
     setTimeout(() => {
         const movie = movieDatabase[movieId];
@@ -284,22 +358,21 @@ function showMoviePage(movieId) {
             document.getElementById('movieSynopsis').textContent = movie.synopsis;
             
             // Update video source
-            const video = document.getElementById('moviePlayer');
-            video.poster = movie.posterUrl;
+            moviePlayer.poster = movie.posterUrl;
             
             // Clear previous sources
-            while (video.firstChild) {
-                video.removeChild(video.firstChild);
+            while (moviePlayer.firstChild) {
+                moviePlayer.removeChild(moviePlayer.firstChild);
             }
             
             // Create new source element
             const source = document.createElement('source');
             source.src = movie.streamUrl;
             source.type = 'application/x-mpegURL';
-            video.appendChild(source);
+            moviePlayer.appendChild(source);
             
             // Load the new source
-            video.load();
+            moviePlayer.load();
             
             // Update genres
             const genreContainer = document.getElementById('movieGenre');
@@ -316,11 +389,18 @@ function showMoviePage(movieId) {
             // Switch pages
             homePage.style.display = 'none';
             moviePage.style.display = 'block';
-            loadingScreen.style.display = 'none';
             window.scrollTo(0, 0);
             
             // Show toast notification
             showToast();
+            
+            // Set timeout for network issues
+            networkErrorTimeout = setTimeout(() => {
+                if (moviePlayer.readyState < 3) { // HAVE_FUTURE_DATA
+                    console.log('Network seems slow, attempting recovery...');
+                    moviePlayer.load();
+                }
+            }, 10000); // 10 seconds
         } else {
             loadingScreen.style.display = 'none';
             alert('Movie not found!');
@@ -330,14 +410,20 @@ function showMoviePage(movieId) {
 
 // Player control functions
 function togglePlay() {
-    const video = document.getElementById('moviePlayer');
-    if (video.paused) {
-        video.play();
-        playBtnIcon.classList.remove('fa-play');
-        playBtnIcon.classList.add('fa-pause');
-        isPlaying = true;
+    if (moviePlayer.paused) {
+        moviePlayer.play().then(() => {
+            playBtnIcon.classList.remove('fa-play');
+            playBtnIcon.classList.add('fa-pause');
+            isPlaying = true;
+        }).catch(error => {
+            console.error('Playback failed:', error);
+            // Attempt recovery
+            if (currentMovieId) {
+                showMoviePage(currentMovieId);
+            }
+        });
     } else {
-        video.pause();
+        moviePlayer.pause();
         playBtnIcon.classList.remove('fa-pause');
         playBtnIcon.classList.add('fa-play');
         isPlaying = false;
@@ -345,39 +431,26 @@ function togglePlay() {
 }
 
 function playMovie() {
-    const video = document.getElementById('moviePlayer');
-    
     // Reset volume controls
-    video.muted = false;
+    moviePlayer.muted = false;
     isMuted = false;
     volumeBtnIcon.classList.remove('fa-volume-mute');
     volumeBtnIcon.classList.add('fa-volume-up');
-    volumeSlider.value = video.volume;
+    volumeSlider.value = moviePlayer.volume;
     
-    // Try to play
-    const playPromise = video.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            playBtnIcon.classList.remove('fa-play');
-            playBtnIcon.classList.add('fa-pause');
-            isPlaying = true;
-        }).catch(error => {
-            console.error('Autoplay prevented:', error);
-        });
-    }
+    // Try to play with error handling
+    togglePlay();
 }
 
 function toggleMute() {
-    const video = document.getElementById('moviePlayer');
-    if (video.muted) {
-        video.muted = false;
+    if (moviePlayer.muted) {
+        moviePlayer.muted = false;
         volumeBtnIcon.classList.remove('fa-volume-mute');
         volumeBtnIcon.classList.add('fa-volume-up');
         isMuted = false;
-        volumeSlider.value = video.volume;
+        volumeSlider.value = moviePlayer.volume;
     } else {
-        video.muted = true;
+        moviePlayer.muted = true;
         volumeBtnIcon.classList.remove('fa-volume-up');
         volumeBtnIcon.classList.add('fa-volume-mute');
         isMuted = true;
@@ -386,9 +459,8 @@ function toggleMute() {
 }
 
 function setVolume(value) {
-    const video = document.getElementById('moviePlayer');
-    video.volume = value;
-    video.muted = (value == 0);
+    moviePlayer.volume = value;
+    moviePlayer.muted = (value == 0);
     
     if (value == 0) {
         volumeBtnIcon.classList.remove('fa-volume-up');
@@ -402,16 +474,16 @@ function setVolume(value) {
 }
 
 function seek(e) {
-    const video = document.getElementById('moviePlayer');
-    const percent = e.offsetX / e.target.offsetWidth;
-    video.currentTime = percent * video.duration;
-    progressBar.style.width = `${percent * 100}%`;
+    if (moviePlayer.duration) {
+        const percent = e.offsetX / e.target.offsetWidth;
+        moviePlayer.currentTime = percent * moviePlayer.duration;
+        progressBar.style.width = `${percent * 100}%`;
+    }
 }
 
 function toggleFullscreen() {
-    const video = document.getElementById('moviePlayer');
     if (!document.fullscreenElement) {
-        video.requestFullscreen().catch(err => {
+        moviePlayer.requestFullscreen().catch(err => {
             alert(`Error attempting to enable fullscreen: ${err.message}`);
         });
     } else {
@@ -458,4 +530,15 @@ showHomePage();
 // Show toast notification on page load
 window.addEventListener('load', function() {
     setTimeout(showToast, 1000);
+});
+
+// Clean up when leaving page
+window.addEventListener('beforeunload', function() {
+    clearTimeout(networkErrorTimeout);
+    clearTimeout(bufferingTimeout);
+    if (moviePlayer) {
+        moviePlayer.pause();
+        moviePlayer.removeAttribute('src');
+        moviePlayer.load();
+    }
 });
