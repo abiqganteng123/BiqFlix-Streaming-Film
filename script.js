@@ -49,7 +49,7 @@ const movieDatabase = {
         genres: ['Comedy', 'Horror'],
         synopsis: 'A group of friends who run a horror-themed tourist attraction accidentally capture real supernatural occurrences on camera, leading to unexpected consequences.',
         posterUrl: 'https://image.tmdb.org/t/p/w300/h2k58PFM2dQsHXNxb2D471r3BJp.jpg',
-        streamUrl: 'https://be4242.rcr52.ams03.cdn255.com/hls2/01/07748/w6eldwaxyuyo_h/index-v1-a1.m3u8?t=20ZExzMwlhBlttzMk3WOPfHcQWH6idbXpJqa3EZ7wzQ&s=1743378467&e=10800&f=38741023&srv=15&asn=24203&sp=4000&p='
+        streamUrl: 'https://54pkdcyxbsxbermn.premilkyway.com/hls2/01/07661/8k66gqreyuv8_n/index-v1-a1.m3u8?t=D3Q-KjWZWaVzFVeZRJ0NBSPajciM7d-lMC9_XS627D8&s=1743378620&e=129600&f=38312632&srv=xcjcmoh7mtij&i=0.4&sp=500&p1=xcjcmoh7mtij&p2=xcjcmoh7mtij&asn=24203'
     },
     'milea': {
         title: 'Milea: Suara Dari Dilan',
