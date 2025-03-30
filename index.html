@@ -6,7 +6,6 @@
     <title>BiqFlix - Premium Streaming</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
             --primary: #e50914;
@@ -29,6 +28,35 @@
             color: var(--light);
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            bottom: 30px;
+        }
+        
+        .toast i {
+            color: var(--primary);
         }
         
         /* Simplified Sidebar */
@@ -157,7 +185,7 @@
             color: var(--gray);
         }
         
-        /* Enhanced Video Player */
+        /* Custom Red Video Player */
         .player-container {
             position: relative;
             width: 100%;
@@ -416,6 +444,12 @@
     </style>
 </head>
 <body>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-heart"></i>
+        <span>Made with by abiq</span>
+    </div>
+
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="logo" onclick="showHomePage()">
@@ -465,9 +499,9 @@
                     <!-- Movie Item 3 -->
                     <div class="movie-item" onclick="showMoviePage('-1883')">
                         <div class="movie-poster">
-                            <img src="https://image.tmdb.org/t/p/w300/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg" alt="1983: Wo Ai Ni">
+                            <img src="https://image.tmdb.org/t/p/w300/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg" alt="Dilan 1983: Wo Ai Ni">
                         </div>
-                        <h3 class="movie-title">1983: Wo Ai Ni</h3>
+                        <h3 class="movie-title">Dilan 1983: Wo Ai Ni</h3>
                         <p class="movie-year">2024</p>
                     </div>
                     
@@ -480,12 +514,20 @@
                         <p class="movie-year">2024</p>
                     </div>
                     
+                    <div class="movie-item" onclick="showMoviePage('kangmak')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/h2k58PFM2dQsHXNxb2D471r3BJp.jpg" alt="Kang Mak (From Pee Mak)">
+                        </div>
+                        <h3 class="movie-title">Kang Mak (from Pee Mak)</h3>
+                        <p class="movie-year">2024</p>
+                    </div>
+                    
                     <!-- Movie Item 5 -->
                     <div class="movie-item" onclick="showMoviePage('milea')">
                         <div class="movie-poster">
                             <img src="https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg" alt="Milea">
                         </div>
-                        <h3 class="movie-title">Milea</h3>
+                        <h3 class="movie-title">Milea: Suara Dari Dilan</h3>
                         <p class="movie-year">2020</p>
                     </div>
                     
@@ -494,20 +536,97 @@
                         <div class="movie-poster">
                             <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="1990">
                         </div>
-                        <h3 class="movie-title">1990</h3>
+                        <h3 class="movie-title">Dilan: 1990</h3>
                         <p class="movie-year">2018</p>
                     </div>
-                </div>
+                    
+                    <div class="movie-item" onclick="showMoviePage('-ibu')">
+                        <div class="movie-poster">
+                            <img src="https://upload.wikimedia.org/wikipedia/id/d/dc/Poster_BEIT.jpg" alt="ibu">
+                        </div>
+                        <h3 class="movie-title">Bila Esok Ibu Tiada</h3>
+                        <p class="movie-year">2024</p>
+                      </div>
+                      
+                      <div class="movie-item" onclick="showMoviePage('-ipar')">
+                        <div class="movie-poster">
+                            <img src="https://upload.wikimedia.org/wikipedia/id/7/79/Poster_IAM.jpg" alt="ibu">
+                        </div>
+                        <h3 class="movie-title">Ipar Adalah Maut</h3>
+                        <p class="movie-year">2024</p>
+                      </div>
+                      
+                      <div class="movie-item" onclick="showMoviePage('-keluarga')">
+                        <div class="movie-poster">
+                            <img src="https://filmindonesia.or.id/f/img/movie/poster/keluarga-besar.jpg" alt="keluarga">
+                        </div>
+                        <h3 class="movie-title">Keluarga besar</h3>
+                        <p class="movie-year">2024</p>
+                      </div>
+                      
+                      <div class="movie-item" onclick="showMoviePage('-misteri')">
+                        <div class="movie-poster">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwQ8PdDk11vlFAwV_VUw2t7qoBvG3sB1Z_15kx0pBd3UnTWhGmMKyDQmo&s=10" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Misteri bilik Korek Api</h3>
+                        <p class="movie-year">2024</p>
+                       </div>
+                       
+                       <div class="movie-item" onclick="showMoviePage('-cinta')">
+                        <div class="movie-poster">
+                            <img src="https://upload.wikimedia.org/wikipedia/id/9/98/Cinta-dalam-ikhlas-poster_1.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Cinta Dalam ikhlas</h3>
+                        <p class="movie-year">2024</p>
+                       </div>
+                       
+                       <div class="movie-item" onclick="showMoviePage('-santet')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Santet Segoro Pitu</h3>
+                        <p class="movie-year">2024</p>
+                       </div>
+                       
+                       <div class="movie-item" onclick="showMoviePage('-jabang')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Jabang Mayit</h3>
+                        <p class="movie-year">2025</p>
+                       </div>
+                       
+                       <div class="movie-item" onclick="showMoviePage('-perewangan')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Perewangan</h3>
+                        <p class="movie-year">2025</p>
+                       </div>
+                       
+                       <div class="movie-item" onclick="showMoviePage('-kemah')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">Kemah Terlarang</h3>
+                        <p class="movie-year">2024</p>
+                      </div>
+                      
+                      <div class="movie-item" onclick="showMoviePage('-serbian')">
+                        <div class="movie-poster">
+                            <img src="https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg" alt="misteri">
+                        </div>
+                        <h3 class="movie-title">A Serbian Film (18+)</h3>
+                        <p class="movie-year">2010</p>
+                      </div>
             </section>
-
-            <!-- More Sections... -->
         </div>
 
         <!-- Movie Page -->
         <div id="movie-page" style="display: none;">
             <div class="player-container">
                 <div class="video-wrapper">
-                    <video id="moviePlayer" poster="" controls>
+                    <video id="moviePlayer" poster="">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -579,17 +698,17 @@
                 genres: ['Horror', 'Mistery', 'Thriller'],
                 synopsis: 'Mila must return a mystical bracelet to the "Dancing Village," unaware that Badarawuhi - a mysterious, mythical being who rules the village - awaits her.',
                 posterUrl: 'https://image.tmdb.org/t/p/w300/A4kY5RKiPJ0sRknU4NojItr93Jr.jpg',
-                streamUrl: 'https://cukooifnwbux.premilkyway.com/hls2/01/04553/l0laisi6i5km_n/index-v1-a1.m3u8?t=J57fk4YweqLdh5AzlYqFx24uxNWTCAv5bsiz6FxzmWc&s=1743262862&e=129600&f=22768180&srv=dwjdqozeoybz&i=0.4&sp=500&p1=dwjdqozeoybz&p2=dwjdqozeoybz&asn=7713'
+                streamUrl: 'https://cukooifnwbux.premilkyway.com/hls2/01/04553/l0laisi6i5km_n/index-v1-a1.m3u8?t=coTRHyThrLsYyKfb1rHM_jIAvw2alpzQ0giRVCW6S1k&s=1743351629&e=129600&f=22768180&srv=dwjdqozeoybz&i=0.4&sp=500&p1=dwjdqozeoybz&p2=dwjdqozeoybz&asn=24203'
             },
             '-1883': {
-                title: '1983: Wo Ai Ni',
+                title: 'Dilan 1983: Wo Ai Ni',
                 year: '2024',
                 duration: '1h 55m',
                 rating: '7.8',
                 genres: ['Drama', 'Romance'],
                 synopsis: 'The continuation of  and Milea\'s love story in 1991.  is now a military academy cadet while Milea continues her studies in Bandung. Their love is tested by distance and circumstances.',
                 posterUrl: 'https://image.tmdb.org/t/p/w300/7teKNxqnTJ0wu8QYlJURqGBQrOw.jpg',
-                streamUrl: 'https://vwyn3lxe5fv5.premilkyway.com/hls2/01/07574/yxhlufr4lcas_n/index-v1-a1.m3u8?t=JU2vk171ZwTojD79INXfif5UjK6oqo1CxPbHWmOKm7A&s=1743248120&e=129600&f=44994556&srv=meuzahgd24x5v&i=0.4&sp=500&p1=meuzahgd24x5v&p2=meuzahgd24x5v&asn=7713'
+                streamUrl: 'https://vwyn3lxe5fv5.premilkyway.com/hls2/01/07574/yxhlufr4lcas_n/index-v1-a1.m3u8?t=iB2L7n5JiK-dVewEqhFdi0IPFfq0h2hrBlkwLI7vWwk&s=1743351481&e=129600&f=44994556&srv=meuzahgd24x5v&i=0.4&sp=500&p1=meuzahgd24x5v&p2=meuzahgd24x5v&asn=24203'
             },
             'agak-laen': {
                 title: 'Agak Laen',
@@ -599,31 +718,153 @@
                 genres: ['Comedy', 'Horror'],
                 synopsis: 'A group of friends who run a horror-themed tourist attraction accidentally capture real supernatural occurrences on camera, leading to unexpected consequences.',
                 posterUrl: 'https://image.tmdb.org/t/p/w300/zoKAggBy8xUEFEHfAXTBvMlLeKy.jpg',
-                streamUrl: 'https://lsj7fwyxsn2mklu.premilkyway.com/hls2/01/04035/szvo795nmmrh_n/index-v1-a1.m3u8?t=YRQsiKdxzZnONW0cE_tP8dTrV2MjsRlRIE_9znJ0CNw&s=1743247973&e=129600&f=44281204&srv=KsLkgBWej56z&i=0.4&sp=500&p1=KsLkgBWej56z&p2=KsLkgBWej56z&asn=7713'
+                streamUrl: 'https://p5qxmilmdj.premilkyway.com/hls2/01/04035/szvo795nmmrh_n/index-v1-a1.m3u8?t=M3luIxqXQIQ2uNrSDpw5dZQoGdTpSKmQ2hLiAPxuFks&s=1743366542&e=129600&f=44281204&srv=KsLkgBWej56z&i=0.4&sp=500&p1=KsLkgBWej56z&p2=KsLkgBWej56z&asn=7713'
+                
+            },
+            'kangmak': {
+                title: 'Kang Mak (From Pee Mak)',
+                year: '2024',
+                duration: '122 min',
+                rating: '7.2',
+                genres: ['Comedy', 'Horror'],
+                synopsis: 'A group of friends who run a horror-themed tourist attraction accidentally capture real supernatural occurrences on camera, leading to unexpected consequences.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/h2k58PFM2dQsHXNxb2D471r3BJp.jpg',
+                streamUrl: 'https://p5qxmilmdj.premilkyway.com/hls2/01/04035/szvo795nmmrh_n/index-v1-a1.m3u8?t=M3luIxqXQIQ2uNrSDpw5dZQoGdTpSKmQ2hLiAPxuFks&s=1743366542&e=129600&f=44281204&srv=KsLkgBWej56z&i=0.4&sp=500&p1=KsLkgBWej56z&p2=KsLkgBWej56z&asn=7713'
             },
             'milea': {
-                title: 'Milea',
+                title: 'Milea: Suara Dari Dilan',
                 year: '2020',
                 duration: '1h 50m',
                 rating: '7.5',
                 genres: ['Drama', 'Romance'],
                 synopsis: 'The continuation of the love story between  and Milea. This time, the story is told from Milea\'s perspective, revealing her feelings and thoughts during their relationship.',
                 posterUrl: 'https://image.tmdb.org/t/p/w300/tRs5EYnviBBn79lQwGW2JLZp93v.jpg',
-                streamUrl: 'https://5nrdhdrayadkaqp2.premilkyway.com/hls2/01/02867/8374s25345g8_n/index-v1-a1.m3u8?t=QIQIOAOURzkuUabazsvBlumO6XHdtNEfOyDKh7KO_mY&s=1743253615&e=129600&f=14337946&srv=galk8e9m4l6if&i=0.4&sp=500&p1=galk8e9m4l6if&p2=galk8e9m4l6if&asn=7713'
+                streamUrl: 'https://5nrdhdrayadkaqp2.premilkyway.com/hls2/01/02867/8374s25345g8_n/index-v1-a1.m3u8'
             },
             '-1990': {
-                title: '1990',
+                title: 'Dilan 1990',
                 year: '2018',
                 duration: '1h 50m',
                 rating: '8.0',
                 genres: ['Drama', 'Romance'],
                 synopsis: 'The story of  and Milea\'s love in 1990 when they were in high school. , a unique and charming boy, tries various ways to get closer to Milea, the new girl at school.',
                 posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
-                streamUrl: 'https://in1rhjc5cqhz.premilkyway.com/hls2/01/08252/kc81uvxqoaf2_n/index-v1-a1.m3u8?t=8BE-enVaX_cC6fORX2iENNOgZpO4vtXFFX9_U2tMPYk&s=1743253492&e=129600&f=43907939&srv=0wnh534rdgf989&i=0.4&sp=500&p1=0wnh534rdgf989&p2=0wnh534rdgf989&asn=7713'
+                streamUrl: 'https://in1rhjc5cqhz.premilkyway.com/hls2/01/08252/kc81uvxqoaf2_n/index-v1-a1.m3u8?t=sXOR6KjM-3SOSNg11pjENkPjQLgJ1L12E5Ft-mv2R08&s=1743367657&e=129600&f=43907939&srv=0wnh534rdgf989&i=0.4&sp=500&p1=0wnh534rdgf989&p2=0wnh534rdgf989&asn=7713'
+                
+            },
+            '-ibu': {
+                title: 'Bila Esok Ibu Tiada',
+                year: '2024',
+                duration: '104 min',
+                rating: '8.0',
+                genres: ['Drama', 'Family'],
+                synopsis: 'It tells the story of a family with four children consisting of 1 boy and 3 girls. The four children are very dependent on their parents, especially their mother. Until one day, these four siblings had to accept the fate of their mother’s passing.',
+                posterUrl: 'https://upload.wikimedia.org/wikipedia/id/d/dc/Poster_BEIT.jpg',
+                streamUrl: 'https://be6721.rcr72.waw04.cdn255.com/hls2/01/08534/fjxpa33ktz2f_h/index-v1-a1.m3u8?t=-viYnQ875BmId4ZaPcj7IrwU0xCkpSRx0WxiYj1f8Y4&s=1743360566&e=10800&f=42674276&srv=16&asn=24203&sp=4000&p='
+                
+            },
+            '-keluarga': {
+                title: 'Keluarga Besar',
+                year: '2024',
+                duration: '104 min',
+                rating: '8.0',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'Pak Wahyu, who only worked as an electronic equipment repairman in a rented shop, was made dizzy by his wife and two children who are only busy with their own lives. There are rumors that Mrs. Wiwik is a fraud, Agung is a believer in black magic, and Ati is pregnant out of wedlock increasingly widespread in their flats. Pak Wahyu also tried to create a large family they were whole again and loved each other.',
+                posterUrl: 'https://filmindonesia.or.id/f/img/movie/poster/keluarga-besar.jpg',
+                streamUrl: 'https://be4242.rcr52.ams03.cdn255.com/hls2/02/08598/vzbv8hqvihqc_h/index-v1-a1.m3u8?t=OcfH5PUIM42JbJysxh4hcgX_2Win8y2ExrDlpq-8n2E&s=1743360777&e=10800&f=42994393&srv=31&asn=24203&sp=4000&p='
+                
+            },
+            '-ipar': {
+                title: 'Ipar Adalah Maut',
+                year: '2024',
+                duration: '131 min',
+                rating: '7.0',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'Nisa and Aris’ initially happy household shakes when Nisa’s younger sibling comes to live with them.',
+                posterUrl: 'https://upload.wikimedia.org/wikipedia/id/7/79/Poster_IAM.jpg',
+                streamUrl: 'https://bk2y7tof8rrl.milocdn.com/hls2/01/03012/ln443snu6z8x_n/index-v1-a1.m3u8?t=82W7QtjzkZ11_2hv7raDeE8_YO_FOcf0djSJyfbw3G0&s=1743361682&e=129600&f=15064949&srv=c3r7vx1sxRdf&i=0.4&sp=500&p1=c3r7vx1sxRdf&p2=c3r7vx1sxRdf&asn=24203'
+                
+            },
+            '-misteri': {
+                title: 'Misteri Bilik Korek Api',
+                year: '2024',
+                duration: '1h 50m',
+                rating: '0.0',
+                genres: ['Drama', 'Horror'],
+                synopsis: 'After discovering a chamber filled with toys and stacks of matchboxes in the orphanage they recently moved into, Dina and the other orphans continue to experience supernatural disturbances in the house. In addition, the arrival of Luna, a new orphan who is no less mysterious than the orphanage they just moved into.',
+                posterUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwQ8PdDk11vlFAwV_VUw2t7qoBvG3sB1Z_15kx0pBd3UnTWhGmMKyDQmo&s=10',
+                streamUrl: 'https://be7713.rcr82.waw05.cdn255.com/hls2/02/08591/wsfaxy17wdj3_h/index-v1-a1.m3u8?t=KuTA7KrmzIxLR-5EglzGGQLY2Npgn14oLHzwgjbx_1Y&s=1743360880&e=10800&f=42994970&srv=26&asn=24203&sp=4000&p='
+                
+            },
+            '-cinta': {
+                title: 'Cinta Dalam Ikhlas',
+                year: '2024',
+                duration: '109 min',
+                rating: '8.0',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'Athar who meets Ara who makes him a better person, but they are still too young and have to pursue their dreams.',
+                posterUrl: 'https://upload.wikimedia.org/wikipedia/id/9/98/Cinta-dalam-ikhlas-poster_1.jpg',
+                streamUrl: 'https://be2719.rcr22.ams01.cdn255.com/hls2/01/08598/c27py8emw5k6_h/index-v1-a1.m3u8?t=rN1CH3c3AAyOf1PnAfRqFf6vveQvZ6Ycqf9ubSmjFHs&s=1743360991&e=10800&f=42994400&srv=29&asn=24203&sp=4000&p='
+                
+            },
+            '-santet': {
+                title: 'Santet Segoro Pitu',
+                year: '2024',
+                duration: '1h 50m',
+                rating: '8.0',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'The story of  and Milea\'s love in 1990 when they were in high school. , a unique and charming boy, tries various ways to get closer to Milea, the new girl at school.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                streamUrl: 'https://be4242.rcr52.ams03.cdn255.com/hls2/01/08473/ox6ji03mab5n_h/index-v1-a1.m3u8?t=R7zsKufBlBct1FfvF41-1s8mwzREmerT66TRFvS8l7g&s=1743361049&e=10800&f=42465447&srv=38&asn=24203&sp=4000&p='
+                
+            },
+            '-jabang': {
+                title: 'Jabang Mayit',
+                year: '2025',
+                duration: '84 min',
+                rating: '8.0',
+                genres: ['Drama', 'Horror'],
+                synopsis: 'Hujan mysteriously loses her baby. In desperation, she meets Bayu, who offers help. Bayu took her to a shaman. The shaman reveals that Hujan’s baby has been taken by a creature from another world, “Hantu Jabang Mayit”, a ghost summoned through dark rituals to target babies of mothers who are not ready to give birth.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                streamUrl: 'https://be4242.rcr52.ams03.cdn255.com/hls2/01/08473/v89b144u4kv2_h/index-v1-a1.m3u8?t=cuDj7FZQQ_H9cHr1cTATtOtjhN4ikr0vtCSMdp9JKqM&s=1743361122&e=10800&f=42465464&srv=05&asn=24203&sp=4000&p='
+                
+            },
+            '-perewangan': {
+                title: 'Perewangan',
+                year: '2025',
+                duration: '109 min',
+                rating: '4.0',
+                genres: ['Horror', 'Mystery' , 'Thriller'],
+                synopsis: 'A cursed mirror opens up a supernatural bridge to a demonic force that disturbs and terrorises young Maya and her family.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                streamUrl: 'https://be2719.rcr22.ams01.cdn255.com/hls2/02/08389/rirvi5syj3ba_h/index-v1-a1.m3u8?t=-zoNdlgbpFfSJyY2CnNi7AcX7St3OrcC5tjqKS23goM&s=1743361203&e=10800&f=41948867&srv=29&asn=24203&sp=4000&p='
+                
+            },
+            '-kemah': {
+                title: 'Kemah Terlarang',
+                year: '2024',
+                duration: '110 min',
+                rating: '6.0',
+                genres: ['Horror'],
+                synopsis: 'Taken from a true story, a Scout camp in Jogja in 2016. Rini, a first-year student at SMA Pandega, participated in a camp in the Wana Alus forest to prove her strength and get closer to Miko, the head of the committee whom she secretly admired. Although initially prohibited by the village guardian, Mbah Sonto, permission was finally granted on the condition of not disturbing the sacred place. However, during the three days of the camp, inexplicable events occurred. On the night of the peak performance of the drama, Rini, who played the role of Roro Putri, suddenly became possessed by the spirit of the original Roro Putri and triggered a mass possession among the other participants. Chaos ensued, with many victims being injured and some in life-threatening situations. Miko, the troop leader, and Mbah Sonto fought hard to save the students. Can they overcome this supernatural terror and bring all the participants home safely?',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                streamUrl: 'https://be4242.rcr52.ams03.cdn255.com/hls2/01/08239/l8g67kpbpl0t_h/index-v1-a1.m3u8?t=svoSYJImgos1LeRh7K0QsIeN9uY2S_IFHy_M5dAJL5I&s=1743361514&e=10800&f=41195966&srv=43&asn=24203&sp=4000&p='
+                
+            },
+            '-serbian': {
+                title: 'A Serbian Film (18+)',
+                year: '2024',
+                duration: '104 min',
+                rating: '5.5',
+                genres: ['Drama', 'Romance'],
+                synopsis: 'Retired porn star Milos leads a normal family life trying to make ends meet. Presented with the opportunity of a lifetime to financially support his family for the rest of their lives, Milos must participate in one last mysterious film. From then on, Milos is drawn into a maelstrom of unbelievable cruelty and mayhem.',
+                posterUrl: 'https://image.tmdb.org/t/p/w300/eitRZXfbw6rO0CfP3lPaGgK63qr.jpg',
+                streamUrl: 'https://uk2y0xwy2xup0.premilkyway.com/hls2/01/00354/ubs384hzi2b8_h/index-v1-a1.m3u8?t=5Co6kzGLBUtcA8mTde5rABoUdOcH1wAn8kmx1p2bMak&s=1743361886&e=129600&f=1774352&srv=jubDiYuWLQCqfHI&i=0.4&sp=500&p1=jubDiYuWLQCqfHI&p2=jubDiYuWLQCqfHI&asn=24203'
             }
         };
 
         // DOM Elements
+        const toast = document.getElementById('toast');
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const homePage = document.getElementById('home-page');
@@ -640,7 +881,14 @@
         // Player state
         let isPlaying = false;
         let isMuted = false;
-        let hls = null;
+        
+        // Show toast notification
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
         
         // Show home page
         function showHomePage(e) {
@@ -655,12 +903,6 @@
                 item.classList.remove('active');
             });
             document.querySelector('.sidebar-menu a:nth-child(1)').classList.add('active');
-            
-            // Clean up HLS instance if exists
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
         }
 
         // Show movies page
@@ -730,31 +972,14 @@
                         video.removeChild(video.firstChild);
                     }
                     
-                    // Check for HLS support
-                    if (Hls.isSupported()) {
-                        if (hls) {
-                            hls.destroy();
-                        }
-                        hls = new Hls();
-                        hls.loadSource(movie.streamUrl);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                            video.play();
-                        });
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        // For Safari
-                        video.src = movie.streamUrl;
-                        video.addEventListener('loadedmetadata', function() {
-                            video.play();
-                        });
-                    } else {
-                        // Fallback to MP4 if available
-                        const source = document.createElement('source');
-                        source.src = movie.streamUrl.replace('.m3u8', '.mp4');
-                        source.type = 'video/mp4';
-                        video.appendChild(source);
-                        video.load();
-                    }
+                    // Create new source element
+                    const source = document.createElement('source');
+                    source.src = movie.streamUrl;
+                    source.type = 'application/x-mpegURL';
+                    video.appendChild(source);
+                    
+                    // Load the new source
+                    video.load();
                     
                     // Update genres
                     const genreContainer = document.getElementById('movieGenre');
@@ -773,6 +998,9 @@
                     moviePage.style.display = 'block';
                     loadingScreen.style.display = 'none';
                     window.scrollTo(0, 0);
+                    
+                    // Show toast notification
+                    showToast();
                 } else {
                     loadingScreen.style.display = 'none';
                     alert('Movie not found!');
@@ -815,8 +1043,7 @@
                     playBtnIcon.classList.add('fa-pause');
                     isPlaying = true;
                 }).catch(error => {
-                    // Show native controls if autoplay fails
-                    video.controls = true;
+                    console.error('Autoplay prevented:', error);
                 });
             }
         }
@@ -907,6 +1134,11 @@
         
         // Initialize - show home page by default
         showHomePage();
+        
+        // Show toast notification on page load
+        window.addEventListener('load', function() {
+            setTimeout(showToast, 1000);
+        });
     </script>
 </body>
 </html>
